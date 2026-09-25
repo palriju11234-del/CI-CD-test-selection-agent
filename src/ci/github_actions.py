@@ -4,6 +4,17 @@ from src.ci.context import CIContext
 
 class GitHubActionsProvider:
     @staticmethod
+    def _get_previous_commit(repo_path: str, current_commit: str) -> str:
+        try:
+            return subprocess.check_output(
+                ["git", "rev-parse", f"{current_commit}~1"],
+                cwd=repo_path,
+                text=True
+            ).strip()
+        except subprocess.CalledProcessError:
+            return current_commit
+
+    @staticmethod
     def get_context(default_local_repo: str) -> CIContext:
         """
         Detects the CI environment. 
@@ -43,12 +54,32 @@ class GitHubActionsProvider:
             )
         else:
             # We are running locally on your machine.
+            test_repo_path = os.path.abspath(default_local_repo)
+            try:
+                repo_path = subprocess.check_output(
+                    ["git", "rev-parse", "--show-toplevel"],
+                    cwd=test_repo_path,
+                    text=True
+                ).strip()
+            except (OSError, subprocess.CalledProcessError):
+                repo_path = os.getcwd()
+
+            current_commit = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"],
+                cwd=repo_path,
+                text=True
+            ).strip()
+
             return CIContext(
-                repo_path=default_local_repo,
-                current_commit="HEAD",
-                base_commit="HEAD~1",
+                repo_path=repo_path,
+                current_commit=current_commit,
+                base_commit=GitHubActionsProvider._get_previous_commit(
+                    repo_path,
+                    current_commit
+                ),
                 is_ci=False,
-                provider="local_dev"
+                provider="local_dev",
+                test_repo_path=test_repo_path
             )
 
 # ============================================================

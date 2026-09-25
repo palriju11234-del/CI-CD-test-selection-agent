@@ -11,6 +11,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # CRITICAL: GitHub does a shallow clone (depth 1) by default. 
+          # We need at least 2 commits so ChangeAnalyzer can run 'git diff HEAD~1'.
+          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -21,7 +25,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          # Ensure test tools are explicitly available in the runner
+          pip install pytest pytest-json-report
 
       - name: Run Test Selection Agent
         run: |
           python src/live_agent.py
+        env:
+          # CRITICAL: Tells Python/pytest where to find your 'src' directory
+          PYTHONPATH: ${{ github.workspace }}
