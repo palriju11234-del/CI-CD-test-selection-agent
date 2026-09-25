@@ -19,3 +19,13 @@ class EvidenceExtractor:
             # Skip results without useful content
             if not content:
                 continue
+
+            evidence.append({
+                "title": result.get("title"),
+                "url": result.get("url"),
+                "content": content,
+                "source": result.get("source"),
+                "published_at": result.get("published_at")
+            })
+
+        return evidence
