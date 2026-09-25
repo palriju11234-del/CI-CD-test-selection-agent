@@ -4,6 +4,19 @@ import numpy as np
 from app.ml.preprocess import clean_text
 
 
+class FactCheckModel:
+
+    def __init__(self):
+
+        # Load trained model
+        self.model = joblib.load(
+            "app/models/model.joblib"
+        )
+
+        # Load TF-IDF vectorizer
+        self.vectorizer = joblib.load(
+            "app/models/vectorizer.joblib"
+        )
 
     def predict(self, query: str):
 
@@ -26,8 +39,4 @@ from app.ml.preprocess import clean_text
         # Confidence of predicted class
         confidence = float(np.max(probabilities))
 
-        return {
-            "label": label,
-            "confidence": confidence,
-            "scores": scores.tolist()
-        }
+       
