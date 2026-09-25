@@ -1,10 +1,51 @@
 import sys
 import os
+from pathlib import Path
+import numpy as np
 import pandas as pd
+from stable_baselines3 import PPO
 
 # Ensure Python can find the src modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.baselines.heuristics import BaselinePrioritizer
+from src.agents.train_ppo import build_training_data
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def get_model_order(model, features: dict) -> list[str]:
+    """Generate a test order using the saved model's fixed observation shape."""
+    test_names = list(features)
+    model_rows, feature_width = model.observation_space.shape
+    if feature_width != 4:
+        raise ValueError(f"Unsupported PPO feature width: {feature_width}")
+
+    remaining = list(range(len(test_names)))
+    ordered = []
+    while remaining:
+        candidates = remaining[:model_rows]
+        observation = np.zeros((model_rows, feature_width), dtype=np.float32)
+
+        for row, index in enumerate(candidates):
+            feature = features[test_names[index]]
+            observation[row] = [
+                feature["is_dependent"],
+                feature["fail_rate"],
+                feature["avg_duration"],
+                0.0
+            ]
+
+        for row in range(len(candidates), model_rows):
+            observation[row, 3] = 1.0
+
+        action, _ = model.predict(observation, deterministic=True)
+        row = min(int(action), len(candidates) - 1)
+        selected = candidates[row]
+        ordered.append(test_names[selected])
+        remaining.remove(selected)
+
+    return ordered
 
 class Evaluator:
     def __init__(self, features: dict, true_outcomes: dict):
@@ -48,20 +89,18 @@ class Evaluator:
 # RUN THE COMPARISON
 # ============================================================
 if __name__ == "__main__":
-    # Same mock features
-    mock_features = {
-      "tests/test_calculator.py::test_add": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.2},
-      "tests/test_calculator.py::test_divide": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.5},
-      "tests/test_calculator.py::test_multiply": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_subtract": {"is_dependent": 1.0, "fail_rate": 0.5, "avg_duration": 0.3}
-    }
+    test_repo = Path(os.getenv(
+        "TEST_REPO_PATH",
+        str(PROJECT_ROOT / "data" / "synthetic" / "demo_repo")
+    )).resolve()
+    features, true_outcomes = build_training_data(test_repo)
+    model_path = PROJECT_ROOT / "models" / "ppo_ci_agent_v1.zip"
+    if not model_path.exists():
+        raise FileNotFoundError(f"Model not found at {model_path}")
+    model = PPO.load(str(model_path))
     
-    mock_true_outcomes = {
-        "tests/test_calculator.py::test_subtract": "FAIL"
-    }
-    
-    prioritizer = BaselinePrioritizer(mock_features)
-    evaluator = Evaluator(mock_features, mock_true_outcomes)
+    prioritizer = BaselinePrioritizer(features)
+    evaluator = Evaluator(features, true_outcomes)
     
     # 1. Gather all baseline sequences
     strategies = {
@@ -69,11 +108,7 @@ if __name__ == "__main__":
         "Random": prioritizer.random_order(),
         "Cheapest First": prioritizer.cheapest_first(),
         "Historical Failure Rate": prioritizer.historical_failure_rate(),
-        # Simulating our trained PPO agent which learned to put subtract first
-        "Trained RL Agent (PPO)": ["tests/test_calculator.py::test_subtract", 
-                                   "tests/test_calculator.py::test_add", 
-                                   "tests/test_calculator.py::test_multiply", 
-                                   "tests/test_calculator.py::test_divide"] 
+        "Trained RL Agent (PPO)": get_model_order(model, features)
     }
     
     # 2. Evaluate and print results

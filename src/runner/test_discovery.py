@@ -14,7 +14,7 @@ class TestDiscoverer:
             # --collect-only tells pytest not to run the tests, just list them
             # -q (quiet) strips out the verbose headers and footers
             result = subprocess.run(
-                [sys.executable, "-m", "pytest", "--collect-only", "-q"],
+                [sys.executable, "-m", "pytest", "tests", "--collect-only", "-q"],
                 cwd=repo_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -29,6 +29,15 @@ class TestDiscoverer:
                     # Isolate the exact test ID, ignoring any trailing characters or status messages
                     test_id = line.strip().split(" ")[0]
                     tests.append(test_id)
+
+            if result.returncode != 0:
+                error_output = result.stderr.strip() or result.stdout.strip()
+                print(
+                    "Pytest collection reported errors; no runnable tests "
+                    "were discovered."
+                )
+                if error_output:
+                    print(error_output)
                     
             return tests
         except Exception as e:

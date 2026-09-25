@@ -16,6 +16,23 @@ from src.features.dependency_analyzer import DependencyAnalyzer
 from src.features.state_builder import StateBuilder
 
 
+def get_test_features(features: dict, test_name: str) -> dict:
+    """Resolve features stored for either a test file or a pytest node ID."""
+    test_features = features.get(test_name)
+    if test_features is not None:
+        return test_features
+
+    test_file = test_name.split("::", 1)[0]
+    return features.get(
+        test_file,
+        {
+            "is_dependent": 0.0,
+            "fail_rate": 0.0,
+            "avg_duration": 0.1
+        }
+    )
+
+
 def main():
     print("==================================================")
     print("🤖 CI/CD Test Selection Agent - Continuous Execution")
@@ -89,6 +106,8 @@ def main():
 
         d_analyzer = DependencyAnalyzer(target_repo)
         dep_graph = d_analyzer.map_dependencies()
+        print("\n[Agent] Dependency tree:")
+        print(d_analyzer.format_dependency_tree(dep_graph, changed_data.keys()))
 
         # ============================================================
         # 4. DYNAMIC TEST DISCOVERY
@@ -141,6 +160,12 @@ def main():
 
         executed_indices = set()
         failures_found = 0
+        model_rows, feature_width = model.observation_space.shape
+
+        if feature_width != 4:
+            raise ValueError(
+                f"Unsupported PPO feature width: {feature_width}; expected 4"
+            )
 
         for step in range(num_tests):
 
@@ -148,32 +173,44 @@ def main():
             # Build observation for every test
             # --------------------------------------------------------
 
+            valid_actions = [
+                i for i in range(num_tests)
+                if i not in executed_indices
+            ]
+            dependent_actions = [
+                index for index in valid_actions
+                if get_test_features(
+                    features,
+                    live_tests[index]
+                )["is_dependent"] > 0
+            ]
+            independent_actions = [
+                index for index in valid_actions
+                if index not in dependent_actions
+            ]
+            priority_actions = dependent_actions or independent_actions
+            candidate_indices = priority_actions[:model_rows]
+
             obs = np.zeros(
-                (num_tests, 4),
+                (model_rows, feature_width),
                 dtype=np.float32
             )
 
-            for i, test in enumerate(live_tests):
+            for row, test_index in enumerate(candidate_indices):
+                test = live_tests[test_index]
 
-                feat = features.get(
-                    test,
-                    {
-                        "is_dependent": 0.0,
-                        "fail_rate": 0.0,
-                        "avg_duration": 0.1
-                    }
-                )
+                feat = get_test_features(features, test)
 
-                is_executed = (
-                    1.0 if i in executed_indices else 0.0
-                )
-
-                obs[i] = [
+                obs[row] = [
                     feat["is_dependent"],
                     feat["fail_rate"],
                     feat["avg_duration"],
-                    is_executed
+                    0.0
                 ]
+
+            # Unused rows are masked as already executed for fixed-size models.
+            for row in range(len(candidate_indices), model_rows):
+                obs[row, 3] = 1.0
 
             # --------------------------------------------------------
             # PPO selects next test
@@ -190,18 +227,10 @@ def main():
             # Prevent duplicate execution
             # --------------------------------------------------------
 
-            if action in executed_indices:
+            if action >= len(candidate_indices):
+                action = 0
 
-                valid_actions = [
-                    i
-                    for i in range(num_tests)
-                    if i not in executed_indices
-                ]
-
-                if not valid_actions:
-                    break
-
-                action = np.random.choice(valid_actions)
+            action = candidate_indices[action]
 
             executed_indices.add(action)
 

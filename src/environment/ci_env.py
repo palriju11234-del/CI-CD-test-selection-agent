@@ -1,6 +1,8 @@
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
+import os
+from pathlib import Path
 
 class CITestEnvironment(gym.Env):
     """
@@ -96,20 +98,34 @@ class CITestEnvironment(gym.Env):
 # TEST THE ENVIRONMENT (RANDOM AGENT)
 # ============================================================
 if __name__ == "__main__":
-    # Mock data based on your exact Feature Engine output
-    mock_features = {
-      "tests/test_calculator.py::test_add": {"is_dependent": 1, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_divide": {"is_dependent": 1, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_multiply": {"is_dependent": 1, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_subtract": {"is_dependent": 1, "fail_rate": 0.5, "avg_duration": 0.1}
+    from src.runner.test_discovery import TestDiscoverer
+    from src.runner.test_runner import SingleTestRunner
+
+    project_root = Path(__file__).resolve().parents[2]
+    test_repo = Path(os.getenv(
+        "TEST_REPO_PATH",
+        str(project_root / "data" / "synthetic" / "demo_repo")
+    )).resolve()
+    test_names = TestDiscoverer.discover_tests(str(test_repo))
+    if not test_names:
+        raise RuntimeError(f"No runnable tests found in {test_repo}")
+
+    features = {
+        test: {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.1}
+        for test in test_names
     }
+    true_outcomes = {}
+
+    for test_name in test_names:
+        result = SingleTestRunner.run_test(str(test_repo), test_name)
+        if result["outcome"] == "FAIL":
+            true_outcomes[test_name] = "FAIL"
+        features[test_name]["avg_duration"] = max(
+            float(result["duration"]),
+            0.001
+        )
     
-    # We pretend for this specific episode/commit that 'test_subtract' will actually fail
-    mock_true_outcomes = {
-        "tests/test_calculator.py::test_subtract": "FAIL"
-    }
-    
-    env = CITestEnvironment(features=mock_features, true_outcomes=mock_true_outcomes)
+    env = CITestEnvironment(features=features, true_outcomes=true_outcomes)
     
     obs, info = env.reset()
     print("--- Starting Random Episode ---")

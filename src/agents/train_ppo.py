@@ -1,28 +1,73 @@
 import os
 import sys
+from pathlib import Path
 import numpy as np
+import pandas as pd
 from stable_baselines3 import PPO
 
 # Ensure Python can find the src module
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.environment.ci_env import CITestEnvironment
+from src.runner.test_discovery import TestDiscoverer
+from src.runner.test_runner import SingleTestRunner
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def build_training_data(test_repo: Path):
+    test_names = TestDiscoverer.discover_tests(str(test_repo))
+    if not test_names:
+        raise RuntimeError(f"No runnable tests found in {test_repo}")
+
+    history_path = PROJECT_ROOT / "data" / "processed" / "test_history.csv"
+    history = pd.read_csv(history_path) if history_path.exists() else pd.DataFrame()
+    features = {}
+    true_outcomes = {}
+
+    for test_name in test_names:
+        matching = pd.DataFrame()
+        if not history.empty and "test" in history:
+            matching = history[history["test"].astype(str).str.endswith(
+                test_name.split("/", 1)[-1]
+            )]
+
+        fail_rate = 0.0
+        avg_duration = 0.1
+        if not matching.empty:
+            results = matching["result"].astype(str).str.upper()
+            fail_rate = float(results.str.startswith("FAIL").mean())
+            avg_duration = float(matching["duration"].mean())
+            if results.iloc[-1].startswith("FAIL"):
+                true_outcomes[test_name] = "FAIL"
+
+        features[test_name] = {
+            "is_dependent": 1.0,
+            "fail_rate": fail_rate,
+            "avg_duration": max(avg_duration, 0.001)
+        }
+
+    for test_name in test_names:
+        result = SingleTestRunner.run_test(str(test_repo), test_name)
+        if result["outcome"] == "FAIL":
+            true_outcomes[test_name] = "FAIL"
+        features[test_name]["avg_duration"] = max(
+            float(result["duration"]),
+            0.001
+        )
+
+    return features, true_outcomes
 
 def train_and_evaluate():
-    # 1. Use the exact feature profile we built earlier
-    mock_features = {
-      "tests/test_calculator.py::test_add": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_divide": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_multiply": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_subtract": {"is_dependent": 1.0, "fail_rate": 0.5, "avg_duration": 0.1}
-    }
-    
-    # We simulate a commit where subtract is broken
-    mock_true_outcomes = {
-        "tests/test_calculator.py::test_subtract": "FAIL"
-    }
+    test_repo = Path(os.getenv(
+        "TEST_REPO_PATH",
+        str(PROJECT_ROOT / "data" / "synthetic" / "demo_repo")
+    )).resolve()
+    features, true_outcomes = build_training_data(test_repo)
+    print(f"Training on {len(features)} tests from {test_repo}")
     
     # 2. Initialize Environment
-    env = CITestEnvironment(features=mock_features, true_outcomes=mock_true_outcomes)
+    env = CITestEnvironment(features=features, true_outcomes=true_outcomes)
     
     # 3. Initialize the PPO Agent
     # MlpPolicy is a standard Neural Network. verbose=1 prints training progress.
@@ -34,9 +79,10 @@ def train_and_evaluate():
     model.learn(total_timesteps=5000)
     
     # Save the trained model
-    os.makedirs("models", exist_ok=True)
-    model.save("models/ppo_ci_agent_v1")
-    print("Model saved to models/ppo_ci_agent_v1.zip")
+    model_path = PROJECT_ROOT / "models" / "ppo_ci_agent_v1"
+    model_path.parent.mkdir(parents=True, exist_ok=True)
+    model.save(str(model_path))
+    print(f"Model saved to {model_path}.zip")
     
     # 4. Evaluate the trained agent
     print("\n--- Evaluating Trained Agent ---")

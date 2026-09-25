@@ -1,0 +1,30 @@
+.env
+data/feverous/train.jsonl
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+
+# Pytest
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+# Generated test results
+data/processed/test_results.json
+
+# Generated ML models
+models/*.zip
+models/*.pt
+models/*.pth

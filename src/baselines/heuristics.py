@@ -1,4 +1,11 @@
 import random
+import os
+import sys
+from pathlib import Path
+import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from src.runner.test_discovery import TestDiscoverer
 
 class BaselinePrioritizer:
     def __init__(self, features: dict):
@@ -35,17 +42,43 @@ class BaselinePrioritizer:
 # TEST THE BASELINES
 # ============================================================
 if __name__ == "__main__":
-    # Same exact mock features from our RL training
-    mock_features = {
-      "tests/test_calculator.py::test_add": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.2},
-      "tests/test_calculator.py::test_divide": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.5},
-      "tests/test_calculator.py::test_multiply": {"is_dependent": 1.0, "fail_rate": 0.0, "avg_duration": 0.1},
-      "tests/test_calculator.py::test_subtract": {"is_dependent": 1.0, "fail_rate": 0.5, "avg_duration": 0.3}
-    }
+    project_root = Path(__file__).resolve().parents[2]
+    test_repo = Path(os.getenv(
+        "TEST_REPO_PATH",
+        str(project_root / "data" / "synthetic" / "demo_repo")
+    )).resolve()
+    test_names = TestDiscoverer.discover_tests(str(test_repo))
+    if not test_names:
+        raise RuntimeError(f"No runnable tests found in {test_repo}")
+
+    history_path = project_root / "data" / "processed" / "test_history.csv"
+    history = pd.read_csv(history_path) if history_path.exists() else pd.DataFrame()
+    mock_features = {}
+
+    for test_name in test_names:
+        matching = pd.DataFrame()
+        if not history.empty and "test" in history:
+            matching = history[history["test"].astype(str).str.endswith(
+                test_name.split("/", 1)[-1]
+            )]
+
+        if matching.empty:
+            fail_rate = 0.0
+            avg_duration = 0.1
+        else:
+            results = matching["result"].astype(str).str.upper()
+            fail_rate = float(results.str.startswith("FAIL").mean())
+            avg_duration = max(float(matching["duration"].mean()), 0.001)
+
+        mock_features[test_name] = {
+            "is_dependent": 1.0,
+            "fail_rate": fail_rate,
+            "avg_duration": avg_duration
+        }
     
     prioritizer = BaselinePrioritizer(mock_features)
     
-    print("--- Baseline Test Ordering Strategies ---")
+    print(f"--- Baseline Test Ordering Strategies ({len(test_names)} tests) ---")
     print(f"\n1. Alphabetical (Default): \n   {prioritizer.alphabetical_order()}")
     print(f"\n2. Random: \n   {prioritizer.random_order()}")
     print(f"\n3. Cheapest First: \n   {prioritizer.cheapest_first()}")
