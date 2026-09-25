@@ -1,0 +1,7 @@
+gitpython
+gymnasium
+numpy
+panda
+pytest
+stable-baselines3
+torch

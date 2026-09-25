@@ -1,0 +1,13 @@
+commit,test,result,duration
+6cdfa227176b855b1806e374f316b9b3b3250f62,tests/test_calculator.py::test_add,PASSED,0
+6cdfa227176b855b1806e374f316b9b3b3250f62,tests/test_calculator.py::test_subtract,PASSED,0
+6cdfa227176b855b1806e374f316b9b3b3250f62,tests/test_calculator.py::test_multiply,PASSED,0
+6cdfa227176b855b1806e374f316b9b3b3250f62,tests/test_calculator.py::test_divide,PASSED,0
+73117d561c9d5bf6ab44f533784ddb8640af113d,tests/test_calculator.py::test_add,PASSED,0
+73117d561c9d5bf6ab44f533784ddb8640af113d,tests/test_calculator.py::test_subtract,FAILED,0
+73117d561c9d5bf6ab44f533784ddb8640af113d,tests/test_calculator.py::test_multiply,PASSED,0
+73117d561c9d5bf6ab44f533784ddb8640af113d,tests/test_calculator.py::test_divide,PASSED,0
+5da5af7a6bd506203ccd905eb090ad41023e2f63,tests/test_calculator.py::test_add,PASSED,0
+5da5af7a6bd506203ccd905eb090ad41023e2f63,tests/test_calculator.py::test_subtract,FAILED,0
+5da5af7a6bd506203ccd905eb090ad41023e2f63,tests/test_calculator.py::test_multiply,FAILED,0
+5da5af7a6bd506203ccd905eb090ad41023e2f63,tests/test_calculator.py::test_divide,PASSED,0
