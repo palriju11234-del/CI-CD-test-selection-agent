@@ -29,9 +29,11 @@ jobs:
           pip install pytest pytest-json-report
           pip install pytest pytest-json-report pandas stable-baselines3 gymnasium GitPython
 
-      - name: Run Test Selection Agent
+        name: Run Test Selection Agent
         run: |
           python src/live_agent.py
         env:
-          # CRITICAL: Tells Python/pytest where to find your 'src' directory
+          PYTHONPATH: ${{ github.workspace }}
+          # Force the GitHub Actions provider to target the synthetic repo
+          GITHUB_WORKSPACE: ${{ github.workspace }}/data/synthetic/demo_repo
           PYTHONPATH: ${{ github.workspace }}
