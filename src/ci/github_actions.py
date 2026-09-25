@@ -22,6 +22,7 @@ class GitHubActionsProvider:
         """
         # GitHub Actions automatically sets this environment variable to "true"
         is_ci = os.getenv("GITHUB_ACTIONS") == "true"
+        test_repo_path = os.getenv("TEST_REPO_PATH") or os.path.abspath(default_local_repo)
         
         if is_ci:
             # 1. We are running in the cloud. Get the workspace path.
@@ -50,7 +51,8 @@ class GitHubActionsProvider:
                 current_commit=current_commit,
                 base_commit=base_commit,
                 is_ci=True,
-                provider="github_actions"
+                provider="github_actions",
+                test_repo_path=test_repo_path
             )
         else:
             # We are running locally on your machine.

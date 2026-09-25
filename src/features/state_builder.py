@@ -47,6 +47,10 @@ class StateBuilder:
             if file_path.endswith('.py'):
                 mod_name = file_path.replace('.py', '').replace('/', '.').replace('\\', '.')
                 changed_modules.add(mod_name)
+                # Also include submodule suffixes (e.g. data.synthetic.demo_repo.src.calculator -> src.calculator)
+                parts = mod_name.split('.')
+                for i in range(len(parts)):
+                    changed_modules.add('.'.join(parts[i:]))
 
         features = {}
         

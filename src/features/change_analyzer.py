@@ -9,7 +9,7 @@ class ChangeAnalyzer:
 
     def __init__(self, repo_path: str):
         self.repo_path = repo_path
-        self.repo = Repo(repo_path)
+        self.repo = Repo(repo_path, search_parent_directories=True)
 
     def get_diff_info(self, old_commit_hash: str, new_commit_hash: str) -> dict:
         """
@@ -18,15 +18,18 @@ class ChangeAnalyzer:
         - changed line numbers
         - affected functions/classes
         """
+        try:
+            old_commit = self.repo.commit(old_commit_hash)
+            new_commit = self.repo.commit(new_commit_hash)
 
-        old_commit = self.repo.commit(old_commit_hash)
-        new_commit = self.repo.commit(new_commit_hash)
-
-        # Get the differences between the two commits
-        diffs = old_commit.diff(
-            new_commit,
-            create_patch=True
-        )
+            # Get the differences between the two commits
+            diffs = old_commit.diff(
+                new_commit,
+                create_patch=True
+            )
+        except Exception as e:
+            print(f"Warning: Could not get diff info between {old_commit_hash} and {new_commit_hash}: {e}")
+            return {}
 
         changed_data = {}
 

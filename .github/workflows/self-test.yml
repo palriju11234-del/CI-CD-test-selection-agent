@@ -31,3 +31,4 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}
           TEST_REPO_PATH: ${{ github.workspace }}/data/synthetic/demo_repo
+          PYTHONUNBUFFERED: "1"

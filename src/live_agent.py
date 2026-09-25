@@ -30,9 +30,13 @@ def main():
         base_path = os.getcwd()
 
         # Synthetic repository containing the actual tests
-        test_repo = os.path.abspath(
-            os.path.join(base_path, "data", "synthetic", "demo_repo")
-        )
+        test_repo_env = os.getenv("TEST_REPO_PATH")
+        if test_repo_env:
+            test_repo = os.path.abspath(test_repo_env)
+        else:
+            test_repo = os.path.abspath(
+                os.path.join(base_path, "data", "synthetic", "demo_repo")
+            )
 
         history_path = os.path.join(
             base_path,
@@ -47,23 +51,12 @@ def main():
             "ppo_ci_agent_v1.zip"
         )
 
-        # ------------------------------------------------------------
-        # IMPORTANT:
-        # GitHub Actions normally sets GITHUB_WORKSPACE to the main
-        # repository. Our actual test repository is the synthetic repo.
-        #
-        # Override it INSIDE Python so GitHubActionsProvider receives
-        # the correct repository path.
-        # ------------------------------------------------------------
-
-        os.environ["GITHUB_WORKSPACE"] = test_repo
-
         # Python must be able to import our agent modules AND pytest
         # must be able to work with the synthetic repository.
-        os.environ["PYTHONPATH"] = os.pathsep.join([
-            base_path,
-            test_repo
-        ])
+        python_paths = [base_path, test_repo]
+        if "PYTHONPATH" in os.environ and os.environ["PYTHONPATH"]:
+            python_paths.append(os.environ["PYTHONPATH"])
+        os.environ["PYTHONPATH"] = os.pathsep.join(python_paths)
 
         print(f"[Config] Agent repo : {base_path}")
         print(f"[Config] Test repo  : {test_repo}")
@@ -73,10 +66,12 @@ def main():
         # ============================================================
 
         context = GitHubActionsProvider.get_context(test_repo)
+        target_repo = context.test_repo_path or test_repo
 
         print(
             f"[Context] Provider: {context.provider} | "
-            f"Repo: {context.repo_path}"
+            f"Git Repo: {context.repo_path} | "
+            f"Test Repo: {target_repo}"
         )
 
         # ============================================================
@@ -92,7 +87,7 @@ def main():
             context.current_commit
         )
 
-        d_analyzer = DependencyAnalyzer(context.repo_path)
+        d_analyzer = DependencyAnalyzer(target_repo)
         dep_graph = d_analyzer.map_dependencies()
 
         # ============================================================
@@ -102,7 +97,7 @@ def main():
         print("[Agent] Discovering live tests...")
 
         live_tests = TestDiscoverer.discover_tests(
-            context.repo_path
+            target_repo
         )
 
         num_tests = len(live_tests)
@@ -118,7 +113,7 @@ def main():
         # ============================================================
 
         state_builder = StateBuilder(
-            context.repo_path,
+            target_repo,
             history_path
         )
 
@@ -222,7 +217,7 @@ def main():
             )
 
             result = SingleTestRunner.run_test(
-                context.repo_path,
+                target_repo,
                 test_to_run
             )
 
@@ -281,21 +276,18 @@ def main():
             "Standard Full Suite Execution\n"
         )
 
-        fallback_repo = os.path.abspath(
-            os.path.join(
-                os.getcwd(),
-                "data",
-                "synthetic",
-                "demo_repo"
-            )
+        fallback_repo = (
+            context.test_repo_path
+            if "context" in locals() and getattr(context, "test_repo_path", None)
+            else (test_repo if "test_repo" in locals() else os.path.abspath(
+                os.path.join(os.getcwd(), "data", "synthetic", "demo_repo")
+            ))
         )
 
-        os.environ["GITHUB_WORKSPACE"] = fallback_repo
-
-        os.environ["PYTHONPATH"] = os.pathsep.join([
-            os.getcwd(),
-            fallback_repo
-        ])
+        fallback_paths = [os.getcwd(), fallback_repo]
+        if "PYTHONPATH" in os.environ and os.environ["PYTHONPATH"]:
+            fallback_paths.append(os.environ["PYTHONPATH"])
+        os.environ["PYTHONPATH"] = os.pathsep.join(fallback_paths)
 
         result = subprocess.run(
             [
