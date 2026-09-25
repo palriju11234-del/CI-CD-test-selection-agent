@@ -40,7 +40,7 @@ class ComplexProcessor:
         if not processed_data:
             return 0
             
-        numerical_sum = 0
+        numerical_sum = 1
         string_count = 0
         
         for item in processed_data:
