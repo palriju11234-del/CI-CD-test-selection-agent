@@ -38,9 +38,3 @@ class FactCheckModel:
 
         # Confidence of predicted class
         confidence = float(np.max(probabilities))
-
-        return {
-            "label": label,
-            "confidence": confidence,
-            "scores": scores.tolist()
-        }

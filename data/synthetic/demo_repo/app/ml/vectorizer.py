@@ -5,5 +5,5 @@ def create_vectorizer():
     """
     Create a TF-IDF Vectorizer.
     """
-
+    return TfidfVectorizer()
     
