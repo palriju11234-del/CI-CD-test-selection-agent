@@ -12,8 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # We need at least 2 commits so ChangeAnalyzer
-          # can run git diff HEAD~1
           fetch-depth: 2
 
       - name: Set up Python
@@ -32,4 +30,4 @@ jobs:
           python src/live_agent.py
         env:
           PYTHONPATH: ${{ github.workspace }}
-          GITHUB_WORKSPACE: ${{ github.workspace }}/data/synthetic/demo_repo
+          TEST_REPO_PATH: ${{ github.workspace }}/data/synthetic/demo_repo
