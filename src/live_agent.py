@@ -31,26 +31,25 @@ def main():
         
         context = GitHubActionsProvider.get_context(default_repo)
         print(f"[Context] Provider: {context.provider} | Repo: {context.repo_path}")
-        test_repo = context.test_repo_path or context.repo_path
 
         # 2. Extract Features
         print("[Agent] Analyzing changes & dependencies...")
         c_analyzer = ChangeAnalyzer(context.repo_path)
         changed_data = c_analyzer.get_diff_info(context.base_commit, context.current_commit)
         
-        d_analyzer = DependencyAnalyzer(test_repo)
+        d_analyzer = DependencyAnalyzer(context.repo_path)
         dep_graph = d_analyzer.map_dependencies()
 
         # 3. Dynamic Test Discovery
         print("[Agent] Discovering live tests...")
-        live_tests = TestDiscoverer.discover_tests(test_repo)
+        live_tests = TestDiscoverer.discover_tests(context.repo_path)
         num_tests = len(live_tests)
         if num_tests == 0:
             print("No tests found. Exiting.")
             sys.exit(0)
 
         # 4. Build RL State
-        state_builder = StateBuilder(test_repo, history_path)
+        state_builder = StateBuilder(context.repo_path, history_path)
         features = state_builder.build_features(changed_data, dep_graph)
         
         # 5. Load RL Model
@@ -84,7 +83,7 @@ def main():
             
             # Execute the selected test immediately
             print(f"  [{step+1}/{num_tests}] PPO Selected: {test_to_run}")
-            result = SingleTestRunner.run_test(test_repo, test_to_run)
+            result = SingleTestRunner.run_test(context.repo_path, test_to_run)
             
             if result['outcome'] == 'FAIL':
                 print(f"      -> ❌ FAIL (Duration: {result['duration']}s)")

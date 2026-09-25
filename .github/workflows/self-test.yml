@@ -27,6 +27,7 @@ jobs:
           pip install -r requirements.txt
           # Ensure test tools are explicitly available in the runner
           pip install pytest pytest-json-report
+          pip install pytest pytest-json-report pandas stable-baselines3 gymnasium GitPython
 
       - name: Run Test Selection Agent
         run: |

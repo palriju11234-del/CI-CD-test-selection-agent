@@ -1,7 +1,6 @@
-gitpython
-gymnasium
-numpy
-panda
-pytest
+pandas
 stable-baselines3
+gymnasium
+GitPython
+numpy
 torch
