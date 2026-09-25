@@ -1,0 +1,20 @@
+name: 'CI/CD Test Selection Agent'
+description: 'Dynamically prioritizes automated tests using Reinforcement Learning to minimize Time to First Failure.'
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        # github.action_path refers to where your agent code lives
+        pip install -r ${{ github.action_path }}/requirements.txt
+        pip install pytest pytest-json-report stable-baselines3 gymnasium gitpython pandas
+
+    - name: Run AI Agent
+      shell: bash
+      run: |
+        # Ensure pytest can find the target repository's code
+        export PYTHONPATH=${{ github.workspace }}
+        # Execute the agent using the script from your action repository
+        python ${{ github.action_path }}/src/live_agent.py

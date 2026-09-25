@@ -22,7 +22,13 @@ class StateBuilder:
         if self.history_df.empty:
             return stats
             
-        for test_name, group in self.history_df.groupby('test'):
+        valid_results = self.history_df[
+            self.history_df['result'].astype(str).str.upper().isin(
+                {'PASSED', 'FAILED'}
+            )
+        ]
+
+        for test_name, group in valid_results.groupby('test'):
             runs = len(group)
             
             # Robust check: matches 'FAIL', 'failed', 'Failed', etc.
@@ -47,17 +53,45 @@ class StateBuilder:
             if file_path.endswith('.py'):
                 mod_name = file_path.replace('.py', '').replace('/', '.').replace('\\', '.')
                 changed_modules.add(mod_name)
+                # Also include submodule suffixes (e.g. data.synthetic.demo_repo.src.calculator -> src.calculator)
+                parts = mod_name.split('.')
+                for i in range(len(parts)):
+                    changed_modules.add('.'.join(parts[i:]))
 
         features = {}
         
-        for test_name, stats in self.test_stats.items():
+        normalized_dependencies = {
+            path.replace("\\", "/"): imports
+            for path, imports in dependency_graph.items()
+        }
+
+        test_names = set(self.test_stats)
+        test_names.update(normalized_dependencies)
+
+        for test_name in sorted(test_names):
+            stats = self.test_stats.get(
+                test_name,
+                {
+                    'fail_rate': 0.0,
+                    'avg_duration': 0.1,
+                    'total_runs': 0
+                }
+            )
             # Extract test_file directly from pytest node ID (e.g., 'tests/test_calc.py::test_add')
-            test_file = test_name.split("::")[0].replace("\\", "/") if "::" in test_name else None
+            test_file = test_name.split("::")[0].replace("\\", "/")
             
             # Feature 1: Dependency Match
             is_dependent = 0
-            if test_file and test_file in dependency_graph:
-                file_deps = dependency_graph[test_file]
+            if test_file:
+                file_deps = normalized_dependencies.get(test_file)
+                if file_deps is None:
+                    alternate_path = (
+                        test_file.replace("test/", "tests/", 1)
+                        if test_file.startswith("test/")
+                        else test_file.replace("tests/", "test/", 1)
+                    )
+                    file_deps = normalized_dependencies.get(alternate_path, [])
+
                 # Check if this test file imports any of the changed source modules
                 if any(mod in file_deps for mod in changed_modules):
                     is_dependent = 1

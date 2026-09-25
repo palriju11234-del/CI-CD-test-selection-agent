@@ -8,3 +8,4 @@ class CIContext:
     base_commit: str
     is_ci: bool
     provider: str
+    test_repo_path: Optional[str] = None
