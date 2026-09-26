@@ -10,34 +10,49 @@ class TestDiscoverer:
         in the target repository exactly as pytest sees them.
         """
         try:
-            # We use python -m pytest to ensure it runs in the current virtual environment
-            # --collect-only tells pytest not to run the tests, just list them
-            # -q (quiet) strips out the verbose headers and footers
+            test_dir = next(
+                (
+                    directory
+                    for directory in ("tests", "test")
+                    if os.path.isdir(os.path.join(repo_path, directory))
+                ),
+                ".",
+            )
+
+            tests = []
+            collection_errors = []
             result = subprocess.run(
-                [sys.executable, "-m", "pytest", "tests", "--collect-only", "-q"],
+                [sys.executable, "-m", "pytest", test_dir, "--collect-only", "-q"],
                 cwd=repo_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
                 check=False
             )
-            
-            tests = []
+
             for line in result.stdout.splitlines():
-                # Pytest node IDs always contain '::' (e.g., tests/test_file.py::test_function)
+                # Pytest node IDs contain '::', unlike its summary lines.
                 if "::" in line:
-                    # Isolate the exact test ID, ignoring any trailing characters or status messages
-                    test_id = line.strip().split(" ")[0]
-                    tests.append(test_id)
+                    test_id = line.strip()
+                    if test_id not in tests:
+                        tests.append(test_id)
 
             if result.returncode != 0:
-                error_output = result.stderr.strip() or result.stdout.strip()
-                print(
-                    "Pytest collection reported errors; no runnable tests "
-                    "were discovered."
+                collection_errors.append(
+                    result.stderr.strip() or result.stdout.strip()
                 )
-                if error_output:
-                    print(error_output)
+
+            if collection_errors:
+                if tests:
+                    print(
+                        "Pytest collection reported errors; "
+                        f"continuing with {len(tests)} collected tests."
+                    )
+                else:
+                    print("Pytest collection reported errors; no runnable tests were discovered.")
+                for error_output in collection_errors:
+                    if error_output:
+                        print(error_output)
                     
             return tests
         except Exception as e:

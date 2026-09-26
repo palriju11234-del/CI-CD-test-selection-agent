@@ -44,11 +44,7 @@ class DependencyAnalyzer:
         Changed source files are returned first, followed by unchanged source
         files. The grouping is derived from the supplied changed file paths.
         """
-        changed_modules = {
-            self._path_to_module(path)
-            for path in (changed_files or [])
-            if path.endswith(".py")
-        }
+        changed_modules = self._changed_modules(changed_files)
         tree = {}
 
         for test_file, imports in dependency_graph.items():
@@ -71,11 +67,7 @@ class DependencyAnalyzer:
     def format_dependency_tree(self, dependency_graph: dict, changed_files=None) -> str:
         """Render the dependency graph as an indented source-to-test tree."""
         tree = self.dependency_tree(dependency_graph, changed_files)
-        changed_modules = {
-            self._path_to_module(path)
-            for path in (changed_files or [])
-            if path.endswith(".py")
-        }
+        changed_modules = self._changed_modules(changed_files)
         changed = []
         unchanged = []
 
@@ -105,6 +97,36 @@ class DependencyAnalyzer:
     def _path_to_module(path: str) -> str:
         return path.replace("\\", "/").removesuffix(".py").replace("/", ".")
 
+    def _changed_modules(self, changed_files) -> set[str]:
+        repo_root = os.path.abspath(self.repo_path).replace("\\", "/")
+        try:
+            result = subprocess.run(
+                ["git", "-C", self.repo_path, "rev-parse", "--show-toplevel"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            git_root = result.stdout.strip().replace("\\", "/")
+            repo_prefix = os.path.relpath(repo_root, git_root).replace("\\", "/")
+        except (OSError, subprocess.CalledProcessError):
+            repo_prefix = ""
+
+        changed_modules = set()
+        for path in changed_files or []:
+            normalized = path.replace("\\", "/")
+            if os.path.isabs(path):
+                try:
+                    normalized = os.path.relpath(path, repo_root).replace("\\", "/")
+                except ValueError:
+                    continue
+            elif repo_prefix and normalized.startswith(repo_prefix + "/"):
+                normalized = normalized[len(repo_prefix) + 1:]
+
+            if normalized.endswith(".py") and not normalized.startswith("../"):
+                changed_modules.add(self._path_to_module(normalized))
+
+        return changed_modules
+
     def get_latest_changed_files(self) -> list[str]:
         """Return Python files changed by the latest commit in the repository."""
         try:
@@ -114,6 +136,7 @@ class DependencyAnalyzer:
                     "-C",
                     self.repo_path,
                     "diff",
+                    "--relative",
                     "--name-only",
                     "HEAD~1",
                     "HEAD"
