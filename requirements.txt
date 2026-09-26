@@ -4,3 +4,6 @@ gymnasium
 GitPython
 numpy
 torch
+psycopg[binary]
+pytest
+pytest-json-report
