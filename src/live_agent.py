@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 import traceback
+import json
+import time
 import numpy as np
 from stable_baselines3 import PPO
 
@@ -160,6 +162,8 @@ def main():
 
         executed_indices = set()
         failures_found = 0
+        execution_results = []
+        run_started = time.monotonic()
         model_rows, feature_width = model.observation_space.shape
 
         if feature_width != 4:
@@ -249,6 +253,7 @@ def main():
                 target_repo,
                 test_to_run
             )
+            execution_results.append(result)
 
             if result["outcome"] == "FAIL":
 
@@ -269,6 +274,25 @@ def main():
         # ============================================================
         # 8. FINAL CI STATUS
         # ============================================================
+
+        passed_count = sum(
+            result["outcome"] == "PASS" for result in execution_results
+        )
+        run_summary = {
+            "repository": os.path.basename(os.path.normpath(target_repo)),
+            "provider": context.provider,
+            "total_tests": num_tests,
+            "executed": len(execution_results),
+            "passed": passed_count,
+            "failed": failures_found,
+            "not_run": max(num_tests - len(execution_results), 0),
+            "duration_seconds": round(time.monotonic() - run_started, 3),
+            "tests": execution_results,
+        }
+        print(
+            "QUBIS_PIPELINE_RESULT_JSON="
+            + json.dumps(run_summary, separators=(",", ":"))
+        )
 
         print("\n==================================================")
         print(

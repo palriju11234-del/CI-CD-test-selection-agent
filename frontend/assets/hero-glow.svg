@@ -1,0 +1,10 @@
+<svg width="286" height="296" viewBox="0 0 286 296" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="heroGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FEB048" stop-opacity="0.7"/>
+      <stop offset="50%" stop-color="#FEB048" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FEB048" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="143" cy="148" rx="143" ry="148" fill="url(#heroGlow)"/>
+</svg>

@@ -1,0 +1,295 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1020" viewBox="0 0 1440 1020">
+  <defs>
+    <linearGradient id="orangeGrad" x1="0" x2="1">
+      <stop offset="0" stop-color="#F6A23A"/>
+      <stop offset="1" stop-color="#D85B0B"/>
+    </linearGradient>
+    <linearGradient id="softOrange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF5E9"/>
+      <stop offset="1" stop-color="#FFE2C1"/>
+    </linearGradient>
+    <linearGradient id="navGrad" x1="0" x2="1">
+      <stop offset="0" stop-color="#172033"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="9" flood-color="#182233" flood-opacity=".10"/>
+    </filter>
+    <filter id="smallShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#182233" flood-opacity=".10"/>
+    </filter>
+    <style>
+      .font { font-family: Inter, Arial, Helvetica, sans-serif; }
+      .title { font-family: Inter, Arial, Helvetica, sans-serif; fill:#142033; font-weight:700; }
+      .muted { font-family: Inter, Arial, Helvetica, sans-serif; fill:#718096; }
+      .body { font-family: Inter, Arial, Helvetica, sans-serif; fill:#334155; }
+      .orange { fill:#E76A12; }
+      .line { stroke:#E8EDF3; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1440" height="1020" fill="#F6F8FB"/>
+  <rect x="0" y="0" width="242" height="1020" fill="url(#navGrad)"/>
+
+  <!-- Sidebar brand -->
+  <g class="font">
+    <path d="M37 28 L53 10 L48 28 L62 28 L42 55 L46 36 L31 36 Z" fill="#FF8A22"/>
+    <text x="76" y="37" font-size="23" font-weight="800" fill="#FFFFFF">QUBIS</text>
+    <text x="77" y="55" font-size="9" letter-spacing="2" fill="#AEB8C7">AI TEST INTELLIGENCE</text>
+  </g>
+
+  <!-- Sidebar navigation -->
+  <g class="font" font-size="14">
+    <rect x="18" y="92" width="206" height="48" rx="11" fill="#E76A12"/>
+    <text x="59" y="122" fill="#FFFFFF" font-weight="700">Dashboard</text>
+    <circle cx="39" cy="116" r="10" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M34 118 L39 113 L44 118 M39 113 V124" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+
+    <g fill="#C6CFDB">
+      <text x="59" y="178">Pipeline Reports</text>
+      <text x="59" y="224">Test Analytics</text>
+      <text x="59" y="270">Model Performance</text>
+      <text x="59" y="316">Repositories</text>
+      <text x="59" y="362">Settings</text>
+    </g>
+
+    <!-- small nav icons -->
+    <g fill="none" stroke="#AAB6C7" stroke-width="1.8">
+      <path d="M30 169 h17 v13 h-17z M33 166 h11"/>
+      <path d="M31 214 h15 v14 H31z M34 211 h9"/>
+      <circle cx="39" cy="261" r="8"/><path d="M39 253v16 M31 261h16"/>
+      <rect x="31" y="305" width="16" height="14" rx="2"/><path d="M35 301h8"/>
+      <path d="M31 354 l8-4 8 4 v8 l-8 4-8-4z M39 354v12"/>
+    </g>
+  </g>
+
+  <!-- Sidebar health -->
+  <rect x="19" y="875" width="204" height="108" rx="12" fill="#172A35" stroke="#31515B"/>
+  <circle cx="40" cy="901" r="6" fill="#39D39F"/>
+  <text x="54" y="905" class="font" font-size="12" font-weight="700" fill="#FFFFFF">System Healthy</text>
+  <text x="31" y="930" class="font" font-size="11" fill="#B9C7D4">Model is running and</text>
+  <text x="31" y="947" class="font" font-size="11" fill="#B9C7D4">processing data in real-time.</text>
+
+  <!-- Top header -->
+  <rect x="242" y="0" width="1198" height="72" fill="#FFFFFF" stroke="#E8EDF3"/>
+  <text x="273" y="42" class="font" font-size="13" fill="#64748B">Smarter tests.</text>
+  <text x="357" y="42" class="font" font-size="13" fill="#E76A12" font-weight="700">Faster CI.</text>
+
+  <g class="font">
+    <circle cx="1320" cy="36" r="19" fill="#FFF0E2"/>
+    <path d="M1314 39v-5a6 6 0 0 1 12 0v5l3 3h-18z" fill="none" stroke="#E76A12" stroke-width="1.7"/>
+    <circle cx="1331" cy="29" r="4" fill="#E76A12"/>
+    <circle cx="1362" cy="36" r="20" fill="#FFF0E2"/>
+    <text x="1352" y="41" font-size="12" font-weight="700" fill="#E76A12">SA</text>
+    <text x="1391" y="32" font-size="12" font-weight="700" fill="#1E293B">Sayak Adak</text>
+    <text x="1391" y="49" font-size="10" fill="#8A94A6">Judge / Reviewer</text>
+  </g>
+
+  <!-- Main title -->
+  <text x="274" y="112" class="title" font-size="27">Pipeline Report</text>
+  <text x="274" y="136" class="muted" font-size="12">View the details of a CI/CD run, including selected tests, skipped tests, and AI analysis.</text>
+  <text x="1130" y="112" class="font" font-size="12" fill="#64748B">Sep 24, 2025  •  14:32</text>
+  <rect x="1300" y="96" width="76" height="28" rx="14" fill="#DCF8EC"/>
+  <text x="1319" y="114" class="font" font-size="11" font-weight="700" fill="#16865D">Completed</text>
+  <rect x="1292" y="132" width="120" height="34" rx="8" fill="#FFFFFF" stroke="#DCE3EC"/>
+  <circle cx="1313" cy="149" r="7" fill="#172033"/>
+  <text x="1327" y="153" class="font" font-size="11" font-weight="700" fill="#334155">View in GitHub</text>
+
+  <!-- KPI cards -->
+  <g filter="url(#smallShadow)">
+    <rect x="274" y="172" width="220" height="116" rx="10" fill="#FFFFFF"/>
+    <rect x="508" y="172" width="220" height="116" rx="10" fill="#FFFFFF"/>
+    <rect x="742" y="172" width="220" height="116" rx="10" fill="#FFFFFF"/>
+    <rect x="976" y="172" width="220" height="116" rx="10" fill="#FFFFFF"/>
+    <rect x="1210" y="172" width="202" height="116" rx="10" fill="#FFF4E9" stroke="#F3C18F"/>
+  </g>
+
+  <!-- KPI 1 -->
+  <circle cx="307" cy="207" r="22" fill="#FFF0E2"/>
+  <text x="297" y="214" class="font" font-size="20" font-weight="700" fill="#E76A12">&lt;/&gt;</text>
+  <text x="341" y="199" class="font" font-size="11" fill="#607086">Total Tests</text>
+  <text x="341" y="226" class="title" font-size="23">5,482</text>
+  <text x="341" y="248" class="font" font-size="10" fill="#20A56F">↓ 72%</text>
+  <text x="381" y="248" class="muted" font-size="10">vs. full suite</text>
+
+  <!-- KPI 2 -->
+  <circle cx="541" cy="207" r="22" fill="#FFF0E2"/>
+  <circle cx="541" cy="207" r="9" fill="none" stroke="#E76A12" stroke-width="2.5"/>
+  <path d="M537 207l3 3 6-7" fill="none" stroke="#E76A12" stroke-width="2"/>
+  <text x="575" y="199" class="font" font-size="11" fill="#607086">Selected Tests</text>
+  <text x="575" y="226" class="title" font-size="23">1,532</text>
+  <text x="575" y="248" class="font" font-size="10" fill="#20A56F">↓ 72%</text>
+  <text x="615" y="248" class="muted" font-size="10">vs. full suite</text>
+
+  <!-- KPI 3 -->
+  <circle cx="775" cy="207" r="22" fill="#FFF0E2"/>
+  <circle cx="775" cy="207" r="9" fill="none" stroke="#E76A12" stroke-width="2.5"/>
+  <path d="M769 201l12 12 M781 201l-12 12" stroke="#E76A12" stroke-width="2"/>
+  <text x="809" y="199" class="font" font-size="11" fill="#607086">Skipped Tests</text>
+  <text x="809" y="226" class="title" font-size="23">3,950</text>
+  <text x="809" y="248" class="font" font-size="10" fill="#20A56F">↓ 72%</text>
+  <text x="849" y="248" class="muted" font-size="10">vs. full suite</text>
+
+  <!-- KPI 4 -->
+  <circle cx="1009" cy="207" r="22" fill="#FFF0E2"/>
+  <circle cx="1009" cy="207" r="9" fill="none" stroke="#E76A12" stroke-width="2.2"/>
+  <path d="M1009 201v7l5 3" fill="none" stroke="#E76A12" stroke-width="2"/>
+  <text x="1043" y="199" class="font" font-size="11" fill="#607086">CI Time Saved</text>
+  <text x="1043" y="226" class="title" font-size="23">71%</text>
+  <text x="1043" y="248" class="font" font-size="10" fill="#E76A12">18m → 5m 12s</text>
+
+  <!-- KPI 5 -->
+  <circle cx="1240" cy="208" r="20" fill="#FFE5CC"/>
+  <path d="M1234 214c8-2 10-10 10-14-7 2-11 6-12 12M1231 216c3-4 7-7 14-8" fill="none" stroke="#D85B0B" stroke-width="2"/>
+  <text x="1271" y="200" class="font" font-size="11" font-weight="700" fill="#087653">Faster feedback.</text>
+  <text x="1271" y="217" class="font" font-size="11" font-weight="700" fill="#087653">Lower cost.</text>
+  <text x="1271" y="234" class="font" font-size="11" font-weight="700" fill="#087653">Same quality.</text>
+
+  <!-- Overview panel -->
+  <rect x="274" y="310" width="812" height="228" rx="10" fill="#FFFFFF" filter="url(#smallShadow)"/>
+  <text x="294" y="339" class="title" font-size="15">Test Selection Overview</text>
+  <circle cx="529" cy="334" r="4" fill="#E76A12"/>
+  <text x="539" y="338" class="muted" font-size="10">Selected Tests</text>
+  <circle cx="626" cy="334" r="4" fill="#F5B4B0"/>
+  <text x="636" y="338" class="muted" font-size="10">Skipped Tests</text>
+
+  <!-- chart grid -->
+  <g stroke="#E9EDF3" stroke-width="1">
+    <path d="M310 372H735 M310 408H735 M310 444H735 M310 480H735 M310 516H735"/>
+    <path d="M310 372V516 M370 372V516 M430 372V516 M490 372V516 M550 372V516 M610 372V516 M670 372V516 M735 372V516"/>
+  </g>
+  <g class="muted" font-size="9">
+    <text x="293" y="518">0</text><text x="287" y="482">2K</text><text x="287" y="446">4K</text><text x="287" y="410">6K</text>
+    <text x="302" y="530">10:00</text><text x="358" y="530">11:00</text><text x="418" y="530">12:00</text><text x="478" y="530">13:00</text>
+    <text x="538" y="530">14:00</text><text x="598" y="530">15:00</text><text x="658" y="530">16:00</text>
+  </g>
+  <!-- area + lines -->
+  <path d="M310 486 L370 456 L430 463 L490 451 L550 470 L610 456 L670 471 L735 458 L735 516 L310 516 Z" fill="#FFE7D0" opacity=".75"/>
+  <path d="M310 486 L370 456 L430 463 L490 451 L550 470 L610 456 L670 471 L735 458" fill="none" stroke="#E76A12" stroke-width="2.5"/>
+  <path d="M310 495 L370 479 L430 470 L490 465 L550 467 L610 458 L670 464 L735 456" fill="none" stroke="#F0A06A" stroke-width="2.5"/>
+  <g fill="#E76A12">
+    <circle cx="310" cy="486" r="3"/><circle cx="370" cy="456" r="3"/><circle cx="430" cy="463" r="3"/><circle cx="490" cy="451" r="3"/><circle cx="550" cy="470" r="3"/><circle cx="610" cy="456" r="3"/><circle cx="670" cy="471" r="3"/><circle cx="735" cy="458" r="3"/>
+  </g>
+
+  <!-- donut -->
+  <circle cx="872" cy="425" r="56" fill="none" stroke="#F5DDD1" stroke-width="18"/>
+  <circle cx="872" cy="425" r="56" fill="none" stroke="#E76A12" stroke-width="18" stroke-dasharray="250 352" stroke-linecap="round" transform="rotate(-90 872 425)"/>
+  <text x="849" y="430" class="title" font-size="20">71%</text>
+  <text x="841" y="446" class="muted" font-size="9">Saved</text>
+  <circle cx="957" cy="396" r="5" fill="#E76A12"/>
+  <text x="969" y="400" class="body" font-size="11">Selected</text>
+  <text x="1041" y="400" class="body" font-size="11">1,532 (28%)</text>
+  <circle cx="957" cy="425" r="5" fill="#F1B6AF"/>
+  <text x="969" y="429" class="body" font-size="11">Skipped</text>
+  <text x="1041" y="429" class="body" font-size="11">3,950 (72%)</text>
+
+  <!-- PR Details -->
+  <rect x="1102" y="310" width="310" height="228" rx="10" fill="#FFFFFF" filter="url(#smallShadow)"/>
+  <text x="1124" y="340" class="title" font-size="15">PR Details</text>
+  <circle cx="1133" cy="371" r="13" fill="#172033"/>
+  <text x="1128" y="376" font-size="12" fill="#FFFFFF" class="font">G</text>
+  <text x="1155" y="369" class="title" font-size="13">PR #182</text>
+  <rect x="1223" y="356" width="58" height="23" rx="12" fill="#DCF8EC"/>
+  <text x="1235" y="371" class="font" font-size="10" font-weight="700" fill="#16865D">Merged</text>
+  <text x="1155" y="389" class="muted" font-size="10">feat: update payment service logic</text>
+  <text x="1155" y="405" class="muted" font-size="10">by @sayak-code</text>
+  <text x="1362" y="405" class="muted" font-size="9">2 days ago</text>
+  <line x1="1124" y1="419" x2="1390" y2="419" class="line"/>
+  <text x="1124" y="441" class="muted" font-size="10">Repository</text>
+  <text x="1204" y="441" class="body" font-size="10">ecommerce</text>
+  <text x="1124" y="461" class="muted" font-size="10">Branch</text>
+  <text x="1204" y="461" class="body" font-size="10">feature/payment-v2 → main</text>
+  <text x="1124" y="481" class="muted" font-size="10">Commit</text>
+  <text x="1204" y="481" class="body" font-size="10">a83f92c</text>
+  <text x="1124" y="501" class="muted" font-size="10">Changed Files</text>
+  <text x="1204" y="501" class="body" font-size="10">4 files</text>
+  <line x1="1124" y1="511" x2="1390" y2="511" class="line"/>
+  <text x="1124" y="529" class="font" font-size="10" font-weight="700" fill="#E76A12">View pull request details →</text>
+
+  <!-- Test results -->
+  <rect x="274" y="556" width="812" height="264" rx="10" fill="#FFFFFF" filter="url(#smallShadow)"/>
+  <text x="294" y="586" class="title" font-size="15">Test Selection Results</text>
+  <rect x="920" y="571" width="135" height="30" rx="7" fill="#FFFFFF" stroke="#DDE4ED"/>
+  <path d="M936 582v10 M932 588l4 4 4-4" stroke="#64748B" stroke-width="1.5"/>
+  <text x="947" y="590" class="font" font-size="10" fill="#526173">Download Report</text>
+
+  <!-- tabs -->
+  <rect x="294" y="604" width="154" height="34" rx="7" fill="#E76A12"/>
+  <text x="317" y="625" class="font" font-size="10" font-weight="700" fill="#FFFFFF">Selected Tests (1,532)</text>
+  <rect x="450" y="604" width="146" height="34" rx="7" fill="#F7F9FB"/>
+  <text x="469" y="625" class="font" font-size="10" fill="#64748B">Skipped Tests (3,950)</text>
+  <rect x="598" y="604" width="145" height="34" rx="7" fill="#F7F9FB"/>
+  <text x="616" y="625" class="font" font-size="10" fill="#64748B">Confidence Analysis</text>
+
+  <!-- table header -->
+  <rect x="294" y="650" width="772" height="32" rx="5" fill="#F7F9FB"/>
+  <g class="font" font-size="9" font-weight="700" fill="#64748B">
+    <text x="324" y="670">TEST NAME</text><text x="500" y="670">FILE PATH</text><text x="706" y="670">REASON</text><text x="866" y="670">CONFIDENCE</text><text x="1005" y="670">STATUS</text>
+  </g>
+
+  <!-- table rows -->
+  <g class="font" font-size="10">
+    <g><rect x="294" y="682" width="772" height="29" fill="#FFFFFF"/><rect x="305" y="691" width="12" height="12" rx="2" fill="#E76A12"/><path d="M308 697l3 3 5-7" stroke="#FFFFFF" fill="none" stroke-width="1.5"/><text x="324" y="701" class="title" font-size="10">test_payment.py</text><text x="500" y="701" class="muted">tests/test_payment.py</text><text x="706" y="701" class="body">Direct dependency (payment_service.py)</text><text x="879" y="701" fill="#E76A12" font-weight="700">96%</text><rect x="997" y="689" width="57" height="20" rx="10" fill="#DCF8EC"/><text x="1009" y="703" fill="#16865D" font-size="9" font-weight="700">Selected</text></g>
+    <g><rect x="294" y="711" width="772" height="29" fill="#FBFCFD"/><rect x="305" y="720" width="12" height="12" rx="2" fill="#E76A12"/><path d="M308 726l3 3 5-7" stroke="#FFFFFF" fill="none" stroke-width="1.5"/><text x="324" y="730" class="title" font-size="10">test_order_payment.py</text><text x="500" y="730" class="muted">tests/test_order_payment.py</text><text x="706" y="730" class="body">Related module (orders → payment)</text><text x="879" y="730" fill="#E76A12" font-weight="700">92%</text><rect x="997" y="718" width="57" height="20" rx="10" fill="#DCF8EC"/><text x="1009" y="732" fill="#16865D" font-size="9" font-weight="700">Selected</text></g>
+    <g><rect x="294" y="740" width="772" height="29" fill="#FFFFFF"/><rect x="305" y="749" width="12" height="12" rx="2" fill="#E76A12"/><path d="M308 755l3 3 5-7" stroke="#FFFFFF" fill="none" stroke-width="1.5"/><text x="324" y="759" class="title" font-size="10">test_checkout.py</text><text x="500" y="759" class="muted">tests/test_checkout.py</text><text x="706" y="759" class="body">Function call chain</text><text x="879" y="759" fill="#E76A12" font-weight="700">88%</text><rect x="997" y="747" width="57" height="20" rx="10" fill="#DCF8EC"/><text x="1009" y="761" fill="#16865D" font-size="9" font-weight="700">Selected</text></g>
+    <g><rect x="294" y="769" width="772" height="29" fill="#FBFCFD"/><rect x="305" y="778" width="12" height="12" rx="2" fill="#E76A12"/><path d="M308 784l3 3 5-7" stroke="#FFFFFF" fill="none" stroke-width="1.5"/><text x="324" y="788" class="title" font-size="10">test_refund.py</text><text x="500" y="788" class="muted">tests/test_refund.py</text><text x="706" y="788" class="body">Related logic (payment flow)</text><text x="879" y="788" fill="#E76A12" font-weight="700">84%</text><rect x="997" y="776" width="57" height="20" rx="10" fill="#DCF8EC"/><text x="1009" y="790" fill="#16865D" font-size="9" font-weight="700">Selected</text></g>
+    <g><rect x="294" y="798" width="772" height="22" fill="#FFFFFF"/><rect x="305" y="803" width="12" height="12" rx="2" fill="#E76A12"/><path d="M308 809l3 3 5-7" stroke="#FFFFFF" fill="none" stroke-width="1.5"/><text x="324" y="813" class="title" font-size="10">test_payment_utils.py</text><text x="500" y="813" class="muted">tests/test_payment_utils.py</text><text x="706" y="813" class="body">Shared utility functions</text><text x="879" y="813" fill="#E76A12" font-weight="700">76%</text><rect x="997" y="801" width="57" height="20" rx="10" fill="#DCF8EC"/><text x="1009" y="815" fill="#16865D" font-size="9" font-weight="700">Selected</text></g>
+  </g>
+
+  <!-- Right selected tests -->
+  <rect x="1102" y="556" width="310" height="264" rx="10" fill="#FFFFFF" filter="url(#smallShadow)"/>
+  <text x="1124" y="586" class="title" font-size="15">Selected Tests</text>
+  <text x="1124" y="602" class="muted" font-size="10">(Detailed)</text>
+  <text x="1350" y="590" class="font" font-size="10" fill="#E76A12">View All</text>
+  <g class="font" font-size="10">
+    <line x1="1124" y1="616" x2="1390" y2="616" class="line"/>
+    <text x="1146" y="638" class="title" font-size="10">test_payment.py</text><text x="1352" y="638" fill="#E76A12" font-weight="700">95%</text><rect x="1343" y="646" width="47" height="19" rx="10" fill="#DCF8EC"/><text x="1353" y="659" fill="#16865D" font-size="8" font-weight="700">Selected</text><text x="1146" y="654" class="muted" font-size="9">tests/test_payment.py</text>
+    <line x1="1124" y1="676" x2="1390" y2="676" class="line"/>
+    <text x="1146" y="698" class="title" font-size="10">test_order_payment.py</text><text x="1352" y="698" fill="#E76A12" font-weight="700">92%</text><rect x="1343" y="706" width="47" height="19" rx="10" fill="#DCF8EC"/><text x="1353" y="719" fill="#16865D" font-size="8" font-weight="700">Selected</text><text x="1146" y="714" class="muted" font-size="9">tests/test_order_payment.py</text>
+    <line x1="1124" y1="736" x2="1390" y2="736" class="line"/>
+    <text x="1146" y="758" class="title" font-size="10">test_checkout.py</text><text x="1352" y="758" fill="#E76A12" font-weight="700">88%</text><rect x="1343" y="766" width="47" height="19" rx="10" fill="#DCF8EC"/><text x="1353" y="779" fill="#16865D" font-size="8" font-weight="700">Selected</text><text x="1146" y="774" class="muted" font-size="9">tests/test_checkout.py</text>
+    <line x1="1124" y1="796" x2="1390" y2="796" class="line"/>
+    <text x="1146" y="818" class="title" font-size="10">test_refund.py</text>
+  </g>
+
+  <!-- Bottom cards -->
+  <rect x="274" y="838" width="260" height="154" rx="10" fill="#FFFFFF" filter="url(#smallShadow)"/>
+  <text x="294" y="866" class="title" font-size="14">Pipeline Timeline</text>
+  <g class="font" font-size="9">
+    <line x1="306" y1="886" x2="306" y2="973" stroke="#F0B27B" stroke-width="2"/>
+    <circle cx="306" cy="889" r="5" fill="#E76A12"/><circle cx="306" cy="912" r="5" fill="#E76A12"/><circle cx="306" cy="935" r="5" fill="#E76A12"/><circle cx="306" cy="958" r="5" fill="#E76A12"/><circle cx="306" cy="981" r="5" fill="#E76A12"/>
+    <text x="321" y="892" class="title" font-size="9">PR Created</text><text x="445" y="892" class="muted" font-size="8">14:32</text>
+    <text x="321" y="915" class="title" font-size="9">Code Analysis</text><text x="445" y="915" class="muted" font-size="8">14:32</text>
+    <text x="321" y="938" class="title" font-size="9">Test Selection (AI)</text><text x="445" y="938" class="muted" font-size="8">14:33</text>
+    <text x="321" y="961" class="title" font-size="9">Tests Executed</text><text x="445" y="961" class="muted" font-size="8">14:37</text>
+    <text x="321" y="984" class="title" font-size="9">Pipeline Completed</text><text x="445" y="984" class="muted" font-size="8">14:38</text>
+  </g>
+
+  <rect x="552" y="838" width="420" height="154" rx="10" fill="#FFFFFF" filter="url(#smallShadow)"/>
+  <text x="572" y="866" class="title" font-size="14">AI Analysis Summary</text>
+  <rect x="868" y="850" width="84" height="24" rx="12" fill="#DCF8EC"/>
+  <text x="881" y="866" class="font" font-size="9" font-weight="700" fill="#16865D">High Confidence</text>
+  <g class="font" font-size="10" fill="#334155">
+    <text x="572" y="892">✓ Model identified 1,532 relevant tests based on:</text>
+    <text x="592" y="910" fill="#64748B">Changed files and module dependency graph</text>
+    <text x="592" y="927" fill="#64748B">Historical execution data and code similarity</text>
+    <text x="572" y="949">✓ No critical test gaps detected</text>
+    <rect x="572" y="959" width="370" height="24" rx="6" fill="#FFF4E9"/>
+    <text x="586" y="975" fill="#E76A12" font-weight="700">Confidence score: 91%</text>
+  </g>
+
+  <rect x="990" y="838" width="422" height="154" rx="10" fill="#FFFFFF" filter="url(#smallShadow)"/>
+  <text x="1010" y="866" class="title" font-size="14">Key Insights</text>
+  <g class="font" font-size="10">
+    <circle cx="1024" cy="892" r="9" fill="#FFF0E2"/><text x="1020" y="896" fill="#E76A12" font-weight="700">↓</text>
+    <text x="1042" y="891" class="title" font-size="10">71% reduction in test execution time</text>
+    <text x="1042" y="907" class="muted" font-size="9">Saved 13m 48s in this pipeline</text>
+    <circle cx="1024" cy="930" r="9" fill="#FFF0E2"/><text x="1020" y="934" fill="#E76A12" font-weight="700">✓</text>
+    <text x="1042" y="929" class="title" font-size="10">No critical tests were skipped</text>
+    <text x="1042" y="945" class="muted" font-size="9">All high-risk areas were covered</text>
+    <circle cx="1024" cy="968" r="9" fill="#FFF0E2"/><text x="1020" y="972" fill="#E76A12" font-weight="700">T</text>
+    <text x="1042" y="967" class="title" font-size="10">Most relevant module: payment</text>
+    <text x="1042" y="983" class="muted" font-size="9">32% of selected tests</text>
+  </g>
+</svg>
