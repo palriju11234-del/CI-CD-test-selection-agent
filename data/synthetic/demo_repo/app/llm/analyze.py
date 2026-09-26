@@ -96,13 +96,3 @@ Rules:
             text = text.strip()
 
         result = json.loads(text)
-
-        return {
-            "claim": claim,
-            "verdict": result["verdict"],
-            "explanation": result["explanation"],
-            "confidence": result["confidence"],
-            "ml_prediction": model_prediction,
-            "ml_confidence": confidence,
-            "evidence": evidence
-        }
